@@ -27,11 +27,12 @@ void naive_matmul(int N, double *A, double *B, double *C) {
 
 void single_optimized_matmul(int N, double *A, double *B, double *C) {
   int i, j, k;
+  int a_offset = 0, b_offset = 0;
 
-  for (i = 0; i < N; i++) {
-    for (k = 0; k < N; k++) {
+  for (i = 0; i < N; i++, a_offset += N, b_offset = 0) {
+    for (k = 0; k < N; k++, b_offset += N) {
       for (j = 0; j < N; j++) {
-        C[i * N + j] += A[i * N + k] * B[k * N + j];
+        C[a_offset + j] += A[a_offset + k] * B[b_offset + j];
       }
     }
   }
