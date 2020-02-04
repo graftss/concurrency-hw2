@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
+#include <math.h>
 
 long get_nano_time() {
   struct timespec *tp = malloc(sizeof(struct timespec));
@@ -30,6 +30,16 @@ void single_optimized_matmul(int N, double *A, double *B, double *C) {
     for (j = 0; j < N; j++)
       for (k = 0; k < N; k++)
         C[i * N + j] = C[i * N + j] + A[i * N + k] * B[k * N + j];
+}
+
+int equal_mats(int N, double *A, double *B) {
+  for (int i = 0; i < N * N; i++) {
+    if (fabs(A[i] - B[i]) > 0.001) {
+      return 0;
+    }
+  }
+
+  return 1;
 }
 
 double random_double() {
@@ -64,6 +74,11 @@ void run_trial(int N) {
   single_optimized_matmul(N, A, B, D);
   float optimized_diff = diff_nano_times(init, get_nano_time());
   printf("optimized: %.10f seconds\n", optimized_diff);
+
+  // we take it for granted that the naive implementation is correct,
+  // so if the optimized result agrees, then that's correct too.
+  char *equal = equal_mats(N, C, D) == 1 ? "true" : "false";
+  printf("algorithms agree: %s\n", equal);
 }
 
 int main()
