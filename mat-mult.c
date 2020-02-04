@@ -3,8 +3,10 @@
 #include <time.h>
 #include <math.h>
 
+struct timespec *tp = 0;
+
 long get_nano_time() {
-  struct timespec *tp = malloc(sizeof(struct timespec));
+  // tp = malloc(sizeof(struct timespec));
   clock_gettime(CLOCK_PROCESS_CPUTIME_ID, tp);
   return 1e9 * tp->tv_sec + tp->tv_nsec;
 }
@@ -84,6 +86,9 @@ void run_trial(int N) {
 int main()
 {
   srand(time(0));
+  tp = malloc(sizeof(struct timespec));
+
   run_trial(256);
+
   return 0;
 }
