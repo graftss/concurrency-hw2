@@ -28,10 +28,13 @@ void naive_matmul(int N, double *A, double *B, double *C) {
 void single_optimized_matmul(int N, double *A, double *B, double *C) {
   int i, j, k;
 
-  for (i = 0; i < N; i++)
-    for (j = 0; j < N; j++)
-      for (k = 0; k < N; k++)
-        C[i * N + j] = C[i * N + j] + A[i * N + k] * B[k * N + j];
+  for (i = 0; i < N; i++) {
+    for (k = 0; k < N; k++) {
+      for (j = 0; j < N; j++) {
+        C[i * N + j] += A[i * N + k] * B[k * N + j];
+      }
+    }
+  }
 }
 
 int equal_mats(int N, double *A, double *B) {
@@ -88,7 +91,7 @@ int main()
   srand(time(0));
   tp = malloc(sizeof(struct timespec));
 
-  run_trial(256);
+  run_trial(512);
 
   return 0;
 }
