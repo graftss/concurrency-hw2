@@ -6,7 +6,6 @@
 struct timespec *tp = 0;
 
 long get_nano_time() {
-  // tp = malloc(sizeof(struct timespec));
   clock_gettime(CLOCK_PROCESS_CPUTIME_ID, tp);
   return 1e9 * tp->tv_sec + tp->tv_nsec;
 }
@@ -27,9 +26,15 @@ void naive_matmul(int N, double *A, double *B, double *C) {
 
 void single_optimized_matmul(int N, double *A, double *B, double *C) {
   int i, j, k;
-  int a_offset = 0, b_offset = 0;
-  double temp_row[N];
 
+  // keep track of the index of A and B corresponding to
+  // the row being iterated over in their respective loops
+  int a_offset = 0, b_offset = 0;
+
+  // local space to store the row of C being computed. once
+  // finished, it is copied to C all at once
+  // it needs to start at all 0's, since that's the assumption on C.
+  double temp_row[N];
   for (i = 0; i < N; i++) temp_row[i] = 0;
 
   for (i = 0; i < N; i++, a_offset += N, b_offset = 0) {
@@ -39,6 +44,7 @@ void single_optimized_matmul(int N, double *A, double *B, double *C) {
       }
     }
 
+    // copy `temp_row` to `C` and reset `temp_row` to 0's
     for (j = 0; j < N; j++) {
       C[a_offset + j] = temp_row[j];
       temp_row[j] = 0;
@@ -66,6 +72,12 @@ void randomize_mat(int N, double *A) {
   }
 }
 
+void clear_mat(int N, double *A) {
+  for (int i = 0; i < N * N; i++) {
+    A[i] = 0;
+  }
+}
+
 double *alloc_mat(int N) {
   return malloc(N * N * sizeof(double));
 }
@@ -78,6 +90,8 @@ void run_trial(int N) {
 
   randomize_mat(N, A);
   randomize_mat(N, B);
+  clear_mat(N, C);
+  clear_mat(N, D);
 
   long init = get_nano_time();
   naive_matmul(N, A, B, C);
