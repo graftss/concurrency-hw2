@@ -28,12 +28,20 @@ void naive_matmul(int N, double *A, double *B, double *C) {
 void single_optimized_matmul(int N, double *A, double *B, double *C) {
   int i, j, k;
   int a_offset = 0, b_offset = 0;
+  double temp_row[N];
+
+  for (i = 0; i < N; i++) temp_row[i] = 0;
 
   for (i = 0; i < N; i++, a_offset += N, b_offset = 0) {
     for (k = 0; k < N; k++, b_offset += N) {
       for (j = 0; j < N; j++) {
-        C[a_offset + j] += A[a_offset + k] * B[b_offset + j];
+        temp_row[j] += A[a_offset + k] * B[b_offset + j];
       }
+    }
+
+    for (j = 0; j < N; j++) {
+      C[a_offset + j] = temp_row[j];
+      temp_row[j] = 0;
     }
   }
 }
@@ -92,7 +100,7 @@ int main()
   srand(time(0));
   tp = malloc(sizeof(struct timespec));
 
-  run_trial(512);
+  run_trial(1024);
 
   return 0;
 }
