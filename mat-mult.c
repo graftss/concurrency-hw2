@@ -115,6 +115,7 @@ int main()
   tp = malloc(sizeof(struct timespec));
 
   run_trial(1024);
+  run_trial(2048);
 
   return 0;
 }
